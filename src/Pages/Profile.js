@@ -5,9 +5,17 @@ import Header from '../components/Header';
 import NetflixAvatar from "../images/Netflix-avatar.png";
 import Plans from "../components/Plans";
 import { NetflixButton } from '../styled/styledComponents';
+import { auth } from '../firebase';
+import { useHistory } from 'react-router-dom';
 
 const Profile = () => {
   const classes = useStyles();
+  const history = useHistory();
+
+  const signout = (e) => {
+      auth.signOut();
+      history.push("/login")
+  }
 
   return (
     <>
@@ -34,7 +42,9 @@ const Profile = () => {
               cost={15000}>
               Netflix Premium
             </Plans>
-            <NetflixButton wide="fullWidth" >Cerrar sesión</NetflixButton>
+            <NetflixButton 
+                onClick={signout}
+                wide="fullWidth" >Cerrar sesión</NetflixButton>
           </div>
         </div>
       </div>

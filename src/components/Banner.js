@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@mui/styles';
 import HeroBanner from "../images/netflix-features.jpg"
 import { Button, Typography } from '@mui/material';
+import axios from 'axios';
+import requests from '../Request';
 
 const Banner = () => {
   const classes = useStyles();
+  const [movie, setMovie] = useState([]);
+
   const truncate = (string, n) => {
     if(string?.length > n){
       return `${string.substr(0, n-1)}...`
@@ -13,11 +17,25 @@ const Banner = () => {
     }
   }
 
+  useEffect(() => {
+    const fetchData = async() => {
+      const request = await axios.get(requests.fetchOriginal)
+      const random = Math.floor(Math.random() * request.data.results.length - 1)
+      setMovie(request.data.results[random])
+      return request
+    } 
+    fetchData()   
+  }, [])
+
+  console.log(movie)
+
   return (
-    <div className={classes.root}>
+    <div className={classes.root} style={{
+      backgroundImage: `url("https://image.tmdb.org/t/p/original/${movie?.backdrop_path}")`
+    }}>
       <div className={classes.content}>
         <Typography variant="h2" component="h1">
-          Movie Title
+          {movie?.title || movie?.name || movie?.original_name}
         </Typography>
         <div className={classes.buttons}>
           <Button>Reproducir</Button>
@@ -25,7 +43,7 @@ const Banner = () => {
         </div>
         <Typography style={{ wordWrap: "break-word" }} variant="h6" className={classes.description}>
           {
-            truncate("Movie description", 60)
+            truncate(`${movie?.overview}`, 160)
           }          
         </Typography>
         <div className={classes.faedBottom} />
@@ -36,7 +54,6 @@ const Banner = () => {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundImage: `url(${HeroBanner})`,
     position: "relative",
     height: "440px",
     objectFit: "contain",
@@ -45,6 +62,8 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff"
   },
   buttons: {
+    marginTop: "30px",
+    marginBottom: "20px",
     "& button": {
       cursor: "pointer",
       color: "#fff",
@@ -58,6 +77,11 @@ const useStyles = makeStyles((theme) => ({
       color: "#000",
       backgroundColor: "#e6e6e6"
     }
+  },
+  content: {
+    paddingTop: "60px",
+    marginLeft:"60px",
+    width: "400px"
   },
   faedBottom: {
     position: "absolute",

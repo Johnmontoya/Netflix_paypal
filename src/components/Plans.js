@@ -2,16 +2,29 @@ import React from 'react'
 import { makeStyles } from '@mui/styles';
 import { Typography } from '@mui/material';
 import { NetflixButton } from '../styled/styledComponents';
+import { useDispatch } from 'react-redux';
+import { setPrice } from '../features/PriceSlice';
+import { useHistory } from 'react-router-dom';
 
 const Plans = ({cost, children, color, wide}) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const handleClick = (cost) => {
+    dispatch(setPrice(cost))
+    history.push("/checkout")
+  }
 
   return (
     <div className={classes.root}>
       <Typography className={classes.standard} variant="h5">
         {children}
       </Typography>      
-      <NetflixButton color={color} wide={wide}>Subscribirse</NetflixButton>
+      <NetflixButton 
+          color={color} 
+          wide={wide}
+          onClick={() => handleClick(cost)}>Subscribirse</NetflixButton>
     </div>
   )
 }
